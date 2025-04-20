@@ -5,6 +5,16 @@ class GameScreens {
         this.pauseScreen = null;
         this.winScreen = null;
         this.isPaused = false;
+        
+        // Create pause screen immediately
+        const pauseContent = document.createElement('div');
+        const title = document.createElement('h2');
+        title.textContent = 'Game Paused';
+        pauseContent.appendChild(title);
+        
+        this.pauseScreen = this.createScreen(pauseContent);
+        this.pauseScreen.style.display = 'none';
+        document.body.appendChild(this.pauseScreen);
     }
 
     createPauseButton() {
@@ -149,27 +159,20 @@ class GameScreens {
 
     togglePause() {
         if (!this.isPaused) {
-            const content = document.createElement('div');
-            const title = document.createElement('h2');
-            title.textContent = 'GAME PAUSED';
-            title.style.fontFamily = "'Press Start 2P', cursive";
-            content.appendChild(title);
-            
-            const highScores = JSON.parse(localStorage.getItem('solitaireHighScores') || '[]');
-            if (highScores.length > 0) {
-                const scoresTitle = document.createElement('h3');
-                scoresTitle.textContent = 'High Scores';
-                content.appendChild(scoresTitle);
-                content.appendChild(this.createHighScoresTable(highScores));
+            // Pause the game
+            this.isPaused = true;
+            this.pauseScreen.style.display = 'flex';
+            if (gameUI) {
+                gameUI.pauseTimer();
             }
-
-            this.pauseScreen = this.createScreen(content);
-            document.body.appendChild(this.pauseScreen);
-        } else if (this.pauseScreen) {
-            this.pauseScreen.remove();
-            this.pauseScreen = null;
+        } else {
+            // Resume the game
+            this.isPaused = false;
+            this.pauseScreen.style.display = 'none';
+            if (gameUI) {
+                gameUI.resumeTimer();
+            }
         }
-        this.isPaused = !this.isPaused;
     }
 
     showWinScreen(playerName, time, moves, madeHighScores, highScores) {

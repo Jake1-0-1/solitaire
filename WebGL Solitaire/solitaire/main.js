@@ -4,7 +4,6 @@ import GameUI from './gameUI.js';
 import StartDialog from './startDialog.js';
 import GameScreens from './gameScreens.js';
 import AudioManager from './audioManager.js';
-import Confetti from './confetti.js';
 
 let scene, camera, renderer;
 let selectedCard = null;
@@ -55,7 +54,6 @@ let highScores;
 let playerName;
 let gameScreens;
 let audioManager;
-let confetti;
 
 function init() {
   // Scene setup
@@ -110,9 +108,6 @@ function init() {
   gameScreens = new GameScreens(
     () => {
       // Play Again
-      if (confetti) {
-        confetti.stop(); // Clean up confetti before reloading
-      }
       location.reload();
     },
     () => {
@@ -120,20 +115,16 @@ function init() {
       window.location.href = "about:blank";
     }
   );
-  gameScreens.createPauseButton();
   
   // Show start dialog
   new StartDialog((name) => {
     playerName = name;
-    gameUI = new GameUI();
+    gameUI = new GameUI(highScores);
     gameUI.startGame();
   });
 
   audioManager = new AudioManager();
   audioManager.initializeAudio();
-
-  // Initialize confetti after scene setup
-  confetti = new Confetti(scene);
 }
 
 function dealInitialCards() {
@@ -695,24 +686,18 @@ function showWinMessage() {
   const moves = gameUI.moveCount;
   
   audioManager.playWinMusic();
-  confetti.start(); // Start the confetti effect
   
   const madeHighScores = highScores.addScore(playerName, time, moves);
   gameScreens.showWinScreen(playerName, time, moves, madeHighScores, highScores.getScores());
 }
 
-// Modify the animate function to update animations and confetti
+// Modify the animate function to update animations and background animation
 function animate() {
   requestAnimationFrame(animate);
   
   // Update animations
   if (animationMixer) {
     animationMixer.update(1/60); // Assuming 60fps
-  }
-  
-  // Update confetti
-  if (confetti && confetti.particles.length > 0) {
-    confetti.update();
   }
   
   renderer.render(scene, camera);

@@ -44,10 +44,10 @@ for (let i = 0; i < 4; i++) {
 const stockPile = { x: -8, y: 6, cards: [] };
 const wastePile = { x: -5, y: 6, cards: [] };
 
-// Add these variables at the top of the file, after the other declarations
+// Game state and animation system variables
 let animationMixer;
 const animations = [];
-const ANIMATION_DURATION = 0.1; // Reduced from 0.15 to 0.1 seconds
+const ANIMATION_DURATION = 0.1; 
 
 let gameUI;
 let highScores;
@@ -280,7 +280,7 @@ function moveCards(cards, targetPile) {
   }
 }
 
-// Add this new function to handle tableau pile repositioning
+// Handles repositioning of cards in tableau piles
 function updateTableauPilePositions(pile) {
   pile.cards.forEach((card, index) => {
     card.position.set(
@@ -302,12 +302,12 @@ function flipCard(card) {
   );
 }
 
-// Add this function to handle animations
+// Initializes the animation system
 function setupAnimations() {
   animationMixer = new THREE.AnimationMixer(scene);
 }
 
-// Add this function to animate card movement
+// Handles smooth card movement animations
 function animateCardMovement(card, targetPosition, onComplete) {
   const startPosition = card.position.clone();
   const positionKF = new THREE.VectorKeyframeTrack(
@@ -337,7 +337,7 @@ function animateCardMovement(card, targetPosition, onComplete) {
   }, ANIMATION_DURATION * 1000);
 }
 
-// Add this function to handle card flip animation
+// Handles card flip animations with texture updates
 function animateCardFlip(card, onComplete) {
   const startRotation = card.rotation.y;
   const rotationKF = new THREE.NumberKeyframeTrack(
@@ -523,7 +523,7 @@ function handleStockClick() {
   stockBack.visible = stockPile.cards.length > 0;
 }
 
-// Add this helper function to ensure waste pile cards are properly positioned
+// Maintains proper card positioning in the waste pile
 function updateWastePilePositions() {
   wastePile.cards.forEach((card, index) => {
     const position = new THREE.Vector3(
